@@ -1,0 +1,20 @@
+0. Select 2 distinct location.
+    - Location A - Sydney
+    - Location B - Mumbai
+1. Create a VPC in location A, Public Subnet, RouteTable, IGW, EC2.
+    a. vpc-a-peering-connection - 10.0.0.0/16, vpc-0e34807abb8c178f7
+    b. vpc-a-peering-connection-subnet-a - 10.0.1.0/24 subnet-087978798fd136280
+    c. vpc-a-peering-connection-igw
+    d. vpc-a-peering-connection-subnet-a-rt
+    e. ec2 - vpc-a-peering-conenction-ec2 - 10.0.1.24 - Private IP
+    f. SG - sg-00bc022396eeabca8
+
+2. Create a VPC in location B, Public Subnet, RouteTable, IGW, EC2.
+    a. vpc-b-peering-connection - 10.1.0.0/16, vpc-0b8f39ba5b678e178
+    b. vpc-b-peering-connection-subnet-b - 10.1.1.0/24 subnet-0c60097e1dc1e9c3b
+    c. vpc-b-peering-connection-igw
+    d. vpc-b-peering-connection-subnet-b-rt
+    e. vpc-b-peering-conenction-ec2 
+    
+3. Peering connection from loc_a to loc_b
+4. Add these peering connection to both route tables.
