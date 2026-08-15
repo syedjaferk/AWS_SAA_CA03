@@ -1,0 +1,18 @@
+3 VPC's
+
+Developer VPC
+developer-vpc
+10.1.0.0/16
+vpc-0f512510e8ed65df3
+
+Subnet - subnet-025a32c2cc4b05711, 10.1.1.0/24
+
+i-0ce4ec2c79bcc6ae6
+10.1.1.150
+
+
+Testing VPC
+
+
+
+Production VPC
