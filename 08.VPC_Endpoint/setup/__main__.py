@@ -1,15 +1,15 @@
 import pulumi
 import pulumi_aws as aws
 
-# ─────────────────────────────────────────────
+
 # Config
-# ─────────────────────────────────────────────
+
 region   = "ap-south-1"
 ami_id   = "ami-01a00762f46d584a1"   # Amazon Linux 2023 — Mumbai
 
-# ─────────────────────────────────────────────
+
 # Key Pair  (uses existing server-pem key)
-# ─────────────────────────────────────────────
+
 with open("server-pem.pub") as f:
     public_key_data = f.read().strip()
 
@@ -20,9 +20,9 @@ key_pair = aws.ec2.KeyPair(
     tags       = {"Name": "server-pem"},
 )
 
-# ─────────────────────────────────────────────
+
 # VPC
-# ─────────────────────────────────────────────
+
 vpc = aws.ec2.Vpc(
     "main-vpc",
     cidr_block           = "10.0.0.0/16",
@@ -31,9 +31,9 @@ vpc = aws.ec2.Vpc(
     tags                 = {"Name": "vpc-endpoint-demo-vpc"},
 )
 
-# ─────────────────────────────────────────────
+
 # Subnets
-# ─────────────────────────────────────────────
+
 public_subnet = aws.ec2.Subnet(
     "public-subnet",
     vpc_id                  = vpc.id,
@@ -51,18 +51,18 @@ private_subnet = aws.ec2.Subnet(
     tags              = {"Name": "vpc-endpoint-demo-private-subnet"},
 )
 
-# ─────────────────────────────────────────────
+
 # Internet Gateway  (for public subnet only)
-# ─────────────────────────────────────────────
+
 igw = aws.ec2.InternetGateway(
     "igw",
     vpc_id = vpc.id,
     tags   = {"Name": "vpc-endpoint-demo-igw"},
 )
 
-# ─────────────────────────────────────────────
+
 # Route Tables
-# ─────────────────────────────────────────────
+
 # Public — routes internet traffic via IGW
 public_rt = aws.ec2.RouteTable(
     "public-rt",
@@ -96,9 +96,9 @@ aws.ec2.RouteTableAssociation(
     route_table_id = private_rt.id,
 )
 
-# ─────────────────────────────────────────────
+
 # Security Groups
-# ─────────────────────────────────────────────
+
 public_sg = aws.ec2.SecurityGroup(
     "public-sg",
     vpc_id      = vpc.id,
@@ -149,9 +149,9 @@ private_sg = aws.ec2.SecurityGroup(
     tags = {"Name": "vpc-endpoint-demo-private-sg"},
 )
 
-# ─────────────────────────────────────────────
+
 # IAM Role for Private EC2  (S3 Read Only)
-# ─────────────────────────────────────────────
+
 assume_role_policy = aws.iam.get_policy_document(
     statements = [
         aws.iam.GetPolicyDocumentStatementArgs(
@@ -184,9 +184,9 @@ private_ec2_instance_profile = aws.iam.InstanceProfile(
     tags = {"Name": "vpc-endpoint-demo-private-ec2-profile"},
 )
 
-# ─────────────────────────────────────────────
+
 # EC2 Instances
-# ─────────────────────────────────────────────
+
 bastion_ec2 = aws.ec2.Instance(
     "bastion-ec2",
     ami                    = ami_id,
@@ -224,9 +224,9 @@ apt-get install -y unzip
     tags = {"Name": "vpc-endpoint-demo-private"},
 )
 
-# ─────────────────────────────────────────────
+
 # S3 Demo Bucket + Test Object
-# ─────────────────────────────────────────────
+
 demo_bucket = aws.s3.BucketV2(
     "demo-bucket",
     bucket_prefix = "vpc-endpoint-demo-",
@@ -253,12 +253,12 @@ aws.s3.BucketObject(
     content_type = "text/plain",
 )
 
-# ─────────────────────────────────────────────
+
 # VPC Gateway Endpoint for S3
 # This is the CORE of the demo.
 # Routes S3 traffic from the private subnet through AWS backbone,
 # without needing a NAT Gateway or internet access.
-# ─────────────────────────────────────────────
+
 vpc_endpoint_s3 = aws.ec2.VpcEndpoint(
     "s3-vpc-endpoint",
     vpc_id            = vpc.id,
@@ -268,9 +268,9 @@ vpc_endpoint_s3 = aws.ec2.VpcEndpoint(
     tags              = {"Name": "vpc-endpoint-demo-s3-endpoint"},
 )
 
-# ─────────────────────────────────────────────
+
 # Outputs
-# ─────────────────────────────────────────────
+
 pulumi.export("vpc_id",                  vpc.id)
 pulumi.export("public_subnet_id",        public_subnet.id)
 pulumi.export("private_subnet_id",       private_subnet.id)
